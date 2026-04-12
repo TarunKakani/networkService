@@ -2,8 +2,6 @@ from scapy.all import sniff
 from scapy.layers.dns import DNS, DNSQR
 from scapy.layers.inet import IP
 from scapy.layers.tls.all import TLSClientHello, TLS_Ext_ServerName
-# import sys
-
 
 def process_packet(packet):
     try:
@@ -44,7 +42,6 @@ def process_packet(packet):
 
 def start_sniffer():
     print("="*60)
-    #print(title)
     print("Scanning for DNS & TLS Traffic...")
     print("="*60)
 
@@ -54,14 +51,3 @@ def start_sniffer():
         print("\n[!] Error: You need to run this as Root/Administrator!")
     except KeyboardInterrupt:
         print("\n\nStopping sniffer")
-
-
-if __name__ == "__main__":
-    start_sniffer()
-
-
-
-
-
-
-

