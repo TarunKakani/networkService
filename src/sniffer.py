@@ -1,4 +1,4 @@
-import capture
+import capture as capture
 import arpSpoof as arpspoof
 import lanScan as lanscan
 import threading

