@@ -63,7 +63,6 @@ def get_timestamp():
     return datetime.now().strftime("%H:%M:%S")
 
 def hostnameInfo(ttl):
-    """Identify OS based on TTL value in IP header"""
     if ttl <= 64:
         return "Linux/Mac/Android"
     elif ttl <= 128:

@@ -23,6 +23,3 @@ def entryGuards() -> Set[str]:
     except Exception as e:
         print(f"Error reading CSV file: {e}")
         return set() # Return an empty set so the sniffer doesn't crash
-    
-if __name__ == "__main__":
-    print(entryGuards())
